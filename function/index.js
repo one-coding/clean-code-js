@@ -104,3 +104,112 @@ function calculatePay(e) {
       throw new InvalidEmployeeType(e.type)
   }
 }
+
+// Good Code -- 솔직히 이건 나중에 공부 더 하고 수정하자.. 뭔말인지 모르겠다...
+class Employee {
+  constructor() {}
+
+  ifPayday() {}
+  calculatePay() {}
+  deliverPay(pay) {}
+}
+
+class EmployeeFactory {
+  makeEmployee(r) {
+    switch (r.type) {
+      case COMMISSIONED:
+        return new CommisionedEmployee(r)
+      case HOURLY:
+        return new HourlyEmployee(r)
+      case SALARIED:
+        return new SalariedEmployee(r)
+      default:
+        throw new InvalidEmployeeType(r.type)
+    }
+  }
+}
+
+// bad code -무해하게 보이는 함수
+
+class UserValidator {
+  constructor() {
+    this.cryptographer = new Cryptographer()
+  }
+
+  checkPassword(userName, password) {
+    user = User.Gateway.findByName(userName)
+    if (user !== User.NULL) {
+      codedPhrase = user.getPhraseEncodedByPassword()
+      phrase = this.cryptographer.decrypt(codedPhrase, password)
+      if ('Valid Password'.equals(phrase)) {
+        Session.initialize()
+        return true
+      }
+    }
+    return false
+  }
+  // 함수 이름만 보고 호출했다간 세션이 초기화 될 수 있다.
+}
+
+/** 명령과 조회의 분리! */
+// bad code
+if (set('username', 'unclebob')) {
+  //...
+}
+
+// Good Code
+if (attributeExists('username')) {
+  setAttribute('username', 'unclebob')
+}
+
+/** 오류코드보단 예외를 사용 */
+
+// bad code
+if (deletePage(page) === E_OK) {
+  // 동사/형용사 혼란이 없는데신 오류코드를 곧바로 처리해야한다는 문제에 부딪힌다.
+}
+
+if (deletePage(page) === E_OK) {
+  if (registry.deleteReference(page.name) === E_OK) {
+    if (configKeys.deleteKey(page.name.makeKey()) === E_OK) {
+      console.log('page deleted')
+    } else {
+      console.log('configKey not deleted')
+    }
+  } else {
+    console.log('deleteReference from registry failed')
+  }
+} else {
+  console.log('delete failed')
+  return E_ERROR
+}
+
+// Good Code
+
+try {
+  deletePage(page)
+  registry.deleteReference(page.name)
+  configKeys.deleteKey(page.name.makeKey())
+} catch (error) {
+  console.error(error)
+}
+
+
+// Excellent Code - try/catch 분리하기
+function delete(page){
+  try {
+    deletePageAndAllReferences(page);
+  } catch (error) {
+    logError(error)
+  }
+}
+
+function deletePageAndAllReferences(page) {
+  deletePage(page);
+  registry.deleteReference(page.name)
+  configKeys.deleteKey(page.name.makeKey())
+}
+
+function logError(error) {
+  console.log(error.message)
+}
