@@ -194,22 +194,43 @@ try {
   console.error(error)
 }
 
-
 // Excellent Code - try/catch 분리하기
-function delete(page){
+function tryDelete(page) {
   try {
-    deletePageAndAllReferences(page);
+    deletePageAndAllReferences(page)
   } catch (error) {
     logError(error)
   }
 }
 
 function deletePageAndAllReferences(page) {
-  deletePage(page);
+  deletePage(page)
   registry.deleteReference(page.name)
   configKeys.deleteKey(page.name.makeKey())
 }
 
 function logError(error) {
   console.log(error.message)
+}
+
+// 3-7은 객체에 대해 더 공부한 다음에 다시
+
+class SetupTeardownIncluder {
+  constructor() {
+    this.pageData = new PageData()
+    this.isSuite = true || false
+    this.testPage = new WikiPage()
+    this.newPageContent = new StringBuffer()
+    this.pageCrawler = new PageCrawler()
+  }
+
+  static render(pageData) {
+    return this.render(pageData, false)
+  }
+
+  static render(pageData, isSuite) {
+    return new SetupTeardownIncluder(pageData).render(isSuite)
+  }
+
+  // 이해를 못하겠다....
 }
